@@ -1,13 +1,6 @@
-import Stripe from 'stripe'
-
 /**
- * Stripe server-side client
- * Used for creating payment intents, managing customers, etc.
+ * Stripe utilities (Demo mode - no actual Stripe connection)
  */
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2023-10-16',
-  typescript: true,
-})
 
 /**
  * Calculate application fee (platform commission)
@@ -31,3 +24,10 @@ export function fromStripeAmount(cents: number): number {
   return cents / 100
 }
 
+// Demo mode: Stripe client is not initialized
+// In production, uncomment below:
+// import Stripe from 'stripe'
+// export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+//   apiVersion: '2023-10-16',
+//   typescript: true,
+// })

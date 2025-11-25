@@ -1,24 +1,12 @@
-import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 
 /**
- * Auth callback handler for email verification and OAuth
+ * Auth callback handler (Demo mode)
+ * In demo mode, just redirect to dashboard
  */
 export async function GET(request: Request) {
-  const { searchParams, origin } = new URL(request.url)
-  const code = searchParams.get('code')
-  const next = searchParams.get('next') ?? '/dashboard'
-
-  if (code) {
-    const supabase = createServerSupabaseClient()
-    const { error } = await supabase.auth.exchangeCodeForSession(code)
-    
-    if (!error) {
-      return NextResponse.redirect(`${origin}${next}`)
-    }
-  }
-
-  // Return to login page with error
-  return NextResponse.redirect(`${origin}/auth/login?error=Could not authenticate`)
+  const { origin } = new URL(request.url)
+  
+  // Demo mode: redirect to dashboard
+  return NextResponse.redirect(`${origin}/dashboard`)
 }
-

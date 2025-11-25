@@ -1,71 +1,29 @@
-import { createServerClient, type CookieOptions } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
-import { Database } from '@/lib/database.types'
-
 /**
- * Creates a Supabase client for use in server components and API routes
+ * Supabase server client (Demo mode - not used)
+ * In demo mode, we use mock data instead
  */
+
+// Demo mode placeholders
 export function createServerSupabaseClient() {
-  const cookieStore = cookies()
-  
-  return createServerClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value
-        },
-        set(name: string, value: string, options: CookieOptions) {
-          try {
-            cookieStore.set({ name, value, ...options })
-          } catch (error) {
-            // Handle cookies in middleware
-          }
-        },
-        remove(name: string, options: CookieOptions) {
-          try {
-            cookieStore.set({ name, value: '', ...options })
-          } catch (error) {
-            // Handle cookies in middleware
-          }
-        },
-      },
-    }
-  )
+  console.warn('Demo mode: Supabase server client not initialized')
+  return null as any
 }
 
-/**
- * Creates a Supabase admin client with service role key
- * Use only in secure server-side contexts
- */
 export function createAdminClient() {
-  const cookieStore = cookies()
-  
-  return createServerClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value
-        },
-        set(name: string, value: string, options: CookieOptions) {
-          try {
-            cookieStore.set({ name, value, ...options })
-          } catch (error) {
-            // Handle cookies in middleware
-          }
-        },
-        remove(name: string, options: CookieOptions) {
-          try {
-            cookieStore.set({ name, value: '', ...options })
-          } catch (error) {
-            // Handle cookies in middleware
-          }
-        },
-      },
-    }
-  )
+  console.warn('Demo mode: Supabase admin client not initialized')
+  return null as any
 }
 
+// Production mode (uncomment when using real Supabase):
+// import { createServerClient, type CookieOptions } from '@supabase/auth-helpers-nextjs'
+// import { cookies } from 'next/headers'
+// import { Database } from '@/lib/database.types'
+// 
+// export function createServerSupabaseClient() {
+//   const cookieStore = cookies()
+//   return createServerClient<Database>(
+//     process.env.NEXT_PUBLIC_SUPABASE_URL!,
+//     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+//     { cookies: { ... } }
+//   )
+// }
