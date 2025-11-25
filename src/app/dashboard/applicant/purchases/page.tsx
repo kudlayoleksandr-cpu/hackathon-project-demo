@@ -12,9 +12,14 @@ import { formatPrice, formatDate, getStatusColor } from '@/lib/utils'
 import { Order } from '@/lib/database.types'
 import { ShoppingBag, ExternalLink, MessageSquare } from 'lucide-react'
 
+type OrderWithRelations = Order & {
+  offers?: any
+  seller?: any
+}
+
 export default function PurchasesPage() {
   const { user } = useAuth()
-  const [orders, setOrders] = useState<Order[]>([])
+  const [orders, setOrders] = useState<OrderWithRelations[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -72,7 +77,7 @@ export default function PurchasesPage() {
           </Card>
         ) : (
           <div className="space-y-4">
-            {orders.map((order: any) => (
+            {orders.map((order) => (
               <Card key={order.id} className="hover:shadow-md transition-shadow">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="flex-1">

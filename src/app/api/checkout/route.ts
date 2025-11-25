@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+// Force dynamic rendering for API routes
+export const dynamic = 'force-dynamic'
+
 /**
  * POST /api/checkout
  * Creates a checkout session (Demo mode - simulated)

@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+// Force dynamic rendering and use edge runtime for webhooks
+export const dynamic = 'force-dynamic'
+
 /**
  * POST /api/webhooks/stripe
  * Handles Stripe webhook events (Demo mode - simulated)

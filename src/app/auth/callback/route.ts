@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server'
 
+// Force dynamic rendering for auth routes
+export const dynamic = 'force-dynamic'
+
 /**
  * Auth callback handler (Demo mode)
  * In demo mode, just redirect to dashboard

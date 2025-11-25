@@ -12,9 +12,14 @@ import { formatPrice, formatDate, formatRelativeTime, getStatusColor } from '@/l
 import { Order } from '@/lib/database.types'
 import { ShoppingBag, Clock, CheckCircle, Send } from 'lucide-react'
 
+type OrderWithRelations = Order & {
+  offers?: any
+  applicant?: any
+}
+
 export default function StudentOrdersPage() {
   const { user } = useAuth()
-  const [orders, setOrders] = useState<Order[]>([])
+  const [orders, setOrders] = useState<OrderWithRelations[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<string>('all')
 
@@ -97,7 +102,7 @@ export default function StudentOrdersPage() {
           </Card>
         ) : (
           <div className="space-y-4">
-            {orders.map((order: any) => (
+            {orders.map((order) => (
               <Card key={order.id} className="hover:shadow-md transition-shadow">
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                   <div className="flex-1">
