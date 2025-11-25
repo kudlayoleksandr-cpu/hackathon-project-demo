@@ -44,7 +44,7 @@ export function useDemoAuth() {
     password: string,
     name: string,
     role: UserRole
-  ) => {
+  ): Promise<{ data: { user: User } | null; error: { message: string } | null }> => {
     // Simulate delay
     await new Promise(resolve => setTimeout(resolve, 500))
 
@@ -83,7 +83,7 @@ export function useDemoAuth() {
   }, [])
 
   // Sign in (demo mode)
-  const signIn = useCallback(async (email: string, password: string) => {
+  const signIn = useCallback(async (email: string, password: string): Promise<{ data: { user: User } | null; error: { message: string } | null }> => {
     // Simulate delay
     await new Promise(resolve => setTimeout(resolve, 500))
 
@@ -116,7 +116,7 @@ export function useDemoAuth() {
   }, [])
 
   // Sign out
-  const signOut = useCallback(async () => {
+  const signOut = useCallback(async (): Promise<{ error: { message: string } | null }> => {
     localStorage.removeItem(STORAGE_KEY)
     setState({ user: null, loading: false })
     router.push('/')
@@ -124,9 +124,9 @@ export function useDemoAuth() {
   }, [router])
 
   // Update profile
-  const updateProfile = useCallback(async (updates: Partial<User>) => {
+  const updateProfile = useCallback(async (updates: Partial<User>): Promise<{ data: User | null; error: { message: string } | null }> => {
     if (!state.user) {
-      return { data: null, error: new Error('Not authenticated') }
+      return { data: null, error: { message: 'Not authenticated' } }
     }
 
     const updatedUser = { ...state.user, ...updates, updated_at: new Date().toISOString() }
@@ -144,8 +144,9 @@ export function useDemoAuth() {
   }, [state.user])
 
   // Reset password (demo - just shows success)
-  const resetPassword = useCallback(async (email: string) => {
+  const resetPassword = useCallback(async (email: string): Promise<{ data: any; error: { message: string } | null }> => {
     await new Promise(resolve => setTimeout(resolve, 500))
+    // Demo mode always succeeds
     return { data: {}, error: null }
   }, [])
 

@@ -116,12 +116,12 @@ export default function ExplorePage() {
   }, [searchQuery, university, country, offerType, priceRange, sortBy])
 
   // Debounced search
-  const debouncedSearch = useCallback(
-    debounce((value: string) => {
+  const debouncedSearch = useCallback((value: string) => {
+    const timeoutId = setTimeout(() => {
       setSearchQuery(value)
-    }, 300),
-    []
-  )
+    }, 300)
+    return () => clearTimeout(timeoutId)
+  }, [])
 
   useEffect(() => {
     fetchOffers()

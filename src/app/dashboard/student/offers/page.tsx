@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
 import { createClient } from '@/lib/supabase/client'
@@ -40,11 +40,7 @@ export default function OffersPage() {
   const [offers, setOffers] = useState<Offer[]>([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    fetchOffers()
-  }, [user])
-
-  async function fetchOffers() {
+  const fetchOffers = useCallback(async () => {
     if (!user) return
 
     const supabase = createClient()
@@ -58,7 +54,11 @@ export default function OffersPage() {
       setOffers(data)
     }
     setLoading(false)
-  }
+  }, [user])
+
+  useEffect(() => {
+    fetchOffers()
+  }, [fetchOffers])
 
   async function toggleOfferStatus(offer: Offer) {
     const supabase = createClient()
