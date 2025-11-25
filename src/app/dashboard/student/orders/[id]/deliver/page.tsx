@@ -13,35 +13,51 @@ import { Input } from '@/components/ui/Input'
 import { Badge } from '@/components/ui/Badge'
 import { Spinner } from '@/components/ui/Spinner'
 import { formatPrice, formatDate } from '@/lib/utils'
+import { getOrderById, mockOrders } from '@/lib/mock-data'
 import { ArrowLeft, Send, FileText, Video, MessageSquare } from 'lucide-react'
 import toast from 'react-hot-toast'
+
+// Import the type from mock-data for consistency
+type OrderWithRelations = {
+  id: string
+  created_at: string
+  content?: string | null
+  meeting_link?: string | null
+  status: string
+  seller_amount: number
+  seller_id: string
+  offers?: {
+    title?: string
+    offer_type?: string
+  } | null
+  applicant?: {
+    name?: string
+  } | null
+}
 
 export default function DeliverOrderPage() {
   const { id } = useParams()
   const router = useRouter()
   const { user } = useAuth()
-  const [order, setOrder] = useState<any>(null)
+  const [order, setOrder] = useState<OrderWithRelations | null>(null)
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [content, setContent] = useState('')
   const [meetingLink, setMeetingLink] = useState('')
 
   useEffect(() => {
-    async function fetchOrder() {
-      if (!user || !id) return
+    function fetchOrder() {
+      if (!user || !id) {
+        setLoading(false)
+        return
+      }
 
-      const supabase = createClient()
-      const { data } = await supabase
-        .from('orders')
-        .select('*, offers(*), applicant:users!orders_applicant_id_fkey(*)')
-        .eq('id', id)
-        .eq('seller_id', user.id)
-        .single()
-
-      if (data) {
-        setOrder(data)
-        setContent(data.content || '')
-        setMeetingLink(data.meeting_link || '')
+      // Use mock data (demo mode)
+      const orderData = getOrderById(id as string)
+      if (orderData && orderData.seller_id === user.id) {
+        setOrder(orderData)
+        setContent(orderData.content || '')
+        setMeetingLink(orderData.meeting_link || '')
       }
       setLoading(false)
     }
@@ -59,25 +75,34 @@ export default function DeliverOrderPage() {
 
     setSubmitting(true)
 
-    const supabase = createClient()
-    const { error } = await supabase
-      .from('orders')
-      .update({
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 500))
+    
+    if (order) {
+      const updatedOrder = {
+        ...order,
         content,
         meeting_link: meetingLink,
-        status: 'delivered',
-        delivered_at: new Date().toISOString(),
-      })
-      .eq('id', id)
-
-    if (error) {
-      toast.error('Failed to deliver order')
-      setSubmitting(false)
-      return
+        status: 'delivered' as const,
+      }
+      setOrder(updatedOrder)
+      
+      // Update mock data
+      const index = mockOrders.findIndex(o => o.id === id)
+      if (index !== -1) {
+        mockOrders[index] = { 
+          ...mockOrders[index], 
+          content,
+          meeting_link: meetingLink,
+          status: 'delivered',
+          delivered_at: new Date().toISOString()
+        }
+      }
     }
-
+    
     toast.success('Order delivered successfully!')
     router.push('/dashboard/student/orders')
+    setSubmitting(false)
   }
 
   if (loading) {
@@ -138,7 +163,7 @@ export default function DeliverOrderPage() {
               {offerType === 'written_review' && <FileText className="h-3 w-3 mr-1" />}
               {offerType === 'video_call' && <Video className="h-3 w-3 mr-1" />}
               {offerType === 'chat_session' && <MessageSquare className="h-3 w-3 mr-1" />}
-              {offerType?.replace('_', ' ')}
+              {offerType?.replace(/_/g, ' ')}
             </Badge>
             <Badge variant="warning">{order.status}</Badge>
           </div>

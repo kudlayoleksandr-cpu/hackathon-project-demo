@@ -398,10 +398,31 @@ export function getOffersByUserId(userId: string): OfferWithUser[] {
     }))
 }
 
+// Type for order with relations
+type OrderWithRelations = Order & {
+  offers?: Offer | null
+  applicant?: User | null
+}
+
 // Helper function to get orders by user ID (as buyer or seller)
 export function getOrdersByUserId(userId: string, role: 'buyer' | 'seller'): Order[] {
   return mockOrders.filter(o => 
     role === 'buyer' ? o.applicant_id === userId : o.seller_id === userId
   )
+}
+
+// Helper function to get a single order by ID with relations
+export function getOrderById(orderId: string): OrderWithRelations | null {
+  const order = mockOrders.find(o => o.id === orderId)
+  if (!order) return null
+  
+  const offer = mockOffers.find(o => o.id === order.offer_id)
+  const applicant = mockUsers.find(u => u.id === order.applicant_id)
+  
+  return {
+    ...order,
+    offers: offer || null,
+    applicant: applicant || null,
+  }
 }
 

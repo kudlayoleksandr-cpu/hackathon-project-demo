@@ -79,12 +79,13 @@ export function useSupabaseAuth() {
     name: string,
     role: UserRole
   ) => {
+    const origin = typeof window !== 'undefined' ? window.location.origin : ''
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: { name, role },
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: `${origin}/auth/callback`,
       },
     })
     return { data, error }
@@ -125,8 +126,9 @@ export function useSupabaseAuth() {
   }
 
   const resetPassword = async (email: string) => {
+    const origin = typeof window !== 'undefined' ? window.location.origin : ''
     const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth/reset-password`,
+      redirectTo: `${origin}/auth/reset-password`,
     })
     return { data, error }
   }
